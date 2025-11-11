@@ -13,14 +13,16 @@ import { server, app } from "./config/socket.js";
 
 const port = process.env.PORT || 3232;
 
-const corsOptions = {
-    origin:[ 
-      process.env.CLIENT_URL,
-      "http://localhost:5173"
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-};
+const allowedOrigins = [
+  process.env.CLIENT_URL,          // Frontend production (Vercel)
+  "http://localhost:5173"          // For local development
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
 
 // middleware
 app.use(cors(corsOptions));
