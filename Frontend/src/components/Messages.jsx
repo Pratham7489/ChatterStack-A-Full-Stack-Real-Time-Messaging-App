@@ -128,21 +128,6 @@ const Messages = () => {
         setIsMuted(true)
     }
 
-    const togglePlayPause = () => {
-        if (videoRef.current) {
-            if (isPlaying) videoRef.current.pause();
-            else videoRef.current.play()
-            setIsPlaying(!isPlaying)
-        }
-    }
-
-    const toggleMute = () => {
-        if (videoRef.current) {
-            videoRef.current.muted = !isMuted
-            setIsMuted(!isMuted)
-        }
-    }
-
     const showPrev = mediaIndex > 0;
     const showNext = mediaIndex < chatMedia.length - 1;
 
@@ -379,4 +364,4 @@ const Messages = () => {
     )
 }
 
-export default Messages
+export default Messages;
