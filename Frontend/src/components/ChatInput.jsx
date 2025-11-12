@@ -6,23 +6,21 @@ import useChatStore from "../store/useChatStore";
 const ChatInput = () => {
     const { sendMessage } = useChatStore();
 
-    const [message, setMessage] = useState("")
-    const [file, setFile] = useState(null)
-    const [showEmoji, setShowEmoji] = useState(false) 
-    const pickerRef = useRef() 
+    const [message, setMessage] = useState("");
+    const [file, setFile] = useState(null);
+    const [showEmoji, setShowEmoji] = useState(false); 
+    const pickerRef = useRef(); 
 
     const onEmojiClick = (emojiData) => {
-        setMessage(prev => prev + emojiData.emoji)
-        // DON'T close emoji picker - allow multiple selections
-        // setShowEmoji(false) - REMOVED
-    }
+        setMessage((prev) => prev + emojiData.emoji);
+    };
 
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0]
+        const selectedFile = e.target.files[0];
         if (selectedFile) {
-            setFile(selectedFile)
+            setFile(selectedFile);
         }
-    }
+    };
 
     const handleSendMessage = async () => {
         if (!message.trim() && !file) return;
@@ -36,30 +34,30 @@ const ChatInput = () => {
         setMessage('');
         setFile(null);
         setShowEmoji(false);
-    }
+    };
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
             handleSendMessage()
         }
-    }
+    };
 
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (pickerRef.current && !pickerRef.current.contains(e.target)) {
-                setShowEmoji(false)
+                setShowEmoji(false);
             }
         }
-        document.addEventListener('mousedown', handleClickOutside)
+        document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
     return (    
-        <div className='sticky bottom-0 left-0 right-0 bg-gray-800 p-2 sm:p-4 border-t border-gray-700'>
+        <div className='sticky bottom-0 left-0 right-0 bg-gray-800 px-2 sm:px-4 py-2 border-t border-gray-700'>
             {/* File Preview */}
             {file && (
-                <div className='relative w-32 h-32 mb-2 inline-block'>
+                <div className='relative w-28 h-28 mb-2 inline-block'>
                     {file?.type.startsWith("image") ? (
                         <img 
                             src={URL.createObjectURL(file)}
@@ -85,9 +83,12 @@ const ChatInput = () => {
             )}
 
             {/* Input Row */}
-            <div className='flex items-center gap-2 w-full relative'>
+            <div className='
+                flex items-center gap-2 w-full bg-gray-900 rounded-full px-3 py-2 sm:py-3
+                overflow-hidden flex-nowrap'
+            >
                 {/* Emoji + File */}
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 flex-shrink-0'>
                     {/* Emoji Picker */}
                     <div className='relative' ref={pickerRef}>
                         <button 
@@ -129,24 +130,32 @@ const ChatInput = () => {
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder='Type a message...'
-                    className='flex-1 bg-gray-700 text-white rounded-full px-4 py-2
-                    outline-none placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 transition-all'    
+                    className='
+                        flex-1 min-w-0 
+                        bg-gray-700 text-white rounded-full px-4 py-2
+                        outline-none placeholder-gray-400 
+                        focus:ring-2 focus:ring-indigo-500 transition-all
+                    '    
                 />
 
                 {/* Send Button */}
                 <button 
                     onClick={handleSendMessage} 
                     disabled={!message.trim() && !file}
-                    className='bg-gradient-to-r from-indigo-500 to-pink-500 px-3 sm:px-5 py-2 
-                    rounded-full shadow hover:scale-105 active:scale-95 transition-transform text-white 
-                    flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='
+                        flex-shrink-0
+                        bg-gradient-to-r from-indigo-500 to-pink-500 px-3 
+                        sm:px-5 py-2 rounded-full shadow hover:scale-105 active:scale-95 
+                        transition-transform text-white flex items-center 
+                        gap-1 disabled:opacity-50 disabled:cursor-not-allowed
+                    '
                 >
                     <Send size={20} />
                     <span className='hidden sm:inline'>Send</span>
                 </button>
             </div>
         </div>
-    )
-}    
+    );
+};    
 
 export default ChatInput;
