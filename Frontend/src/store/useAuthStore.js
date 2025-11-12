@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast';
 import { create } from 'zustand'
 import axiosInstance from '../lib/axios.js';
+import useChatStore from './useChatStore.js';
 import { io } from "socket.io-client";
 
 const BASE_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3232";
@@ -57,8 +58,15 @@ const useAuthStore = create((set, get) => ({
         try {
             get().disconnectSocket();
             await axiosInstance.get("/user/logout");
+
+            // Clear user session
             set({ authUser: null, isAuthenticated: false, socket: null  });
-            toast.success("Logged out Successfully"); // FIXED: Removed data reference
+
+            // Reset chat store 
+            const chatStore = useChatStore.getState();
+            chatStore.setSelectedUser(null);
+
+            toast.success("Logged out Successfully"); 
         } catch (error) {
             toast.error(error?.response?.data?.message || "Error in logout");
         }

@@ -62,7 +62,6 @@ const useChatStore = create((set, get) => ({
                 else {
                     // Normal new message
                     set({ messages: [...messages, data.data] });
-                    toast.success("Message sent!");
                 }
             }
         } catch (error) {

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
+import useKeyboardAvoidance from "../hooks/useKeyboardAvoidance";
 import { Mail, Lock, User, ArrowLeft } from "lucide-react"
 
 const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchView }) =>
-{
+{    
+    const emailRef = useRef(null);
+    const passRef = useRef(null);
+    useKeyboardAvoidance(emailRef);
+    useKeyboardAvoidance(passRef);
 
     const renderLoginForm = () => 
         <>
@@ -14,10 +19,19 @@ const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchVi
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <Mail size={20} />
                     </span>
-                    <input type="email" name="email" placeholder="Email Address" 
-                    value={formData.email} onChange={handleChange} className={`w-full pl-10
-                    pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
-                    focus:ring-2 focus:ring-blue-500 transition duration-300 ${errors.email ? 'border-red-500' : 'border-gray-700'}`}
+                    <input 
+                        ref={emailRef}
+                        type="email" 
+                        name="email" 
+                        placeholder="Email Address" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        className={`
+                            w-full pl-10
+                            pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
+                            focus:ring-2 focus:ring-blue-500 transition duration-300 
+                            ${errors.email ? 'border-red-500' : 'border-gray-700'}`
+                        }
                     />
                 </div>
                 <p className="text-red-500 text-xs mt-1 ml-1 h-4">{errors.email || ''}
@@ -29,10 +43,19 @@ const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchVi
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <Lock size={20} />
                     </span>
-                    <input type="password" name="password" placeholder="Password" 
-                    value={formData.password} onChange={handleChange} className={`w-full pl-10
-                    pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
-                    focus:ring-2 focus:ring-blue-500 transition duration-300 ${errors.password ? 'border-red-500' : 'border-gray-700'}`}
+                    <input 
+                        ref={passRef}
+                        type="password" 
+                        name="password" 
+                        placeholder="Password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        className={
+                            `w-full pl-10
+                            pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
+                            focus:ring-2 focus:ring-blue-500 transition duration-300 
+                            ${errors.password ? 'border-red-500' : 'border-gray-700'}`
+                        }
                     />
                 </div>
                 <p className="text-red-500 text-xs mt-1 ml-1 h-4">{errors.password || ''}</p>
@@ -45,9 +68,12 @@ const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchVi
                 </button>
             </div>
 
-            <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600
-            transition duration-300 text-white font-semibold py-3 rounded-xl transform hover:scale-105 disabled:opacity-50
-            disabled:cursor-not-allowed">
+            <button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600
+                    transition duration-300 text-white font-semibold py-3 rounded-xl transform hover:scale-105 disabled:opacity-50
+                    disabled:cursor-not-allowed"
+            >
                 login
             </button>
 
@@ -89,10 +115,18 @@ const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchVi
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <Mail size={20} />
                     </span>
-                    <input type="email" name="email" placeholder="Email Address" 
-                    value={formData.email} onChange={handleChange} className={`w-full pl-10
-                    pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
-                    focus:ring-2 focus:ring-blue-500 transition duration-300 ${errors.email ? 'border-red-500' : 'border-gray-700'}`}
+                    <input 
+                        ref={emailRef}
+                        type="email" 
+                        name="email" 
+                        placeholder="Email Address" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        className={
+                            `w-full pl-10 pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
+                            focus:ring-2 focus:ring-blue-500 transition duration-300 
+                            ${errors.email ? 'border-red-500' : 'border-gray-700'}`
+                        }
                     />
                 </div>
                 <p className="text-red-500 text-xs mt-1 ml-1 h-4">{errors.email || ''}
@@ -104,18 +138,30 @@ const AuthForm = ({ view, formData, errors, handleChange, handleSubmit, switchVi
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <Lock size={20} />
                     </span>
-                    <input type="password" name="password" placeholder="Password" 
-                    value={formData.password} onChange={handleChange} className={`w-full pl-10
-                    pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
-                    focus:ring-2 focus:ring-blue-500 transition duration-300 ${errors.password ? 'border-red-500' : 'border-gray-700'}`}
+                    <input 
+                        ref={passRef}
+                        type="password" 
+                        name="password" 
+                        placeholder="Password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        className={
+                            `w-full pl-10
+                            pr-4 py-3 bg-gray-800 text-white border rounded-xl focus:outline-none
+                            focus:ring-2 focus:ring-blue-500 transition duration-300 
+                            ${errors.password ? 'border-red-500' : 'border-gray-700'}`
+                        }
                     />
                 </div>
                 <p className="text-red-500 text-xs mt-1 ml-1 h-4">{errors.password || ''}</p>
             </div>
 
-            <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600
-            transition duration-300 text-white font-semibold py-3 rounded-xl transform hover:scale-105 disabled:opacity-50
-            disabled:cursor-not-allowed">
+            <button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600
+                    transition duration-300 text-white font-semibold py-3 rounded-xl transform hover:scale-105 disabled:opacity-50
+                    disabled:cursor-not-allowed"
+                >
                 Register
             </button>
 

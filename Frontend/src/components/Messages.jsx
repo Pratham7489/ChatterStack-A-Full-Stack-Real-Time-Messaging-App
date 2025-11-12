@@ -274,7 +274,7 @@ const Messages = () => {
                                            ${
                                              /^[\p{Emoji}\s]+$/u.test(msg?.text?.trim() || "")
                                                ? "text-3xl md:text-4xl"
-                                               : "text-md"
+                                               : "text-lg"
                                            }`}
                                        >
                                          {msg?.text}

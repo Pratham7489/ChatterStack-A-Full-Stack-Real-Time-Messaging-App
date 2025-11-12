@@ -12,78 +12,95 @@ const Sidebar = () => {
   const [toggleProfileBox, setToggleProfileBox] = useState(false) 
   const [showOnlineUsers, setShowOnlineUsers] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileView, setIsMobileView] = useState(false);
 
-  const { authUser, logoutAuth, onlineUsers } = useAuthStore(); // Get onlineUsers from useAuthStore
+  const { authUser, logoutAuth, onlineUsers } = useAuthStore(); 
   const { getUsers, users, selectedUser, setSelectedUser } = useChatStore();
 
-  const filteredUsers = showOnlineUsers ? users?.filter((user) => onlineUsers?.includes(user?._id)) : users;
+  const filteredUsers = showOnlineUsers 
+    ? users?.filter((user) => onlineUsers?.includes(user?._id)) 
+    : users;
 
   const onlineCount = onlineUsers?.length > 0 ? onlineUsers.length - 1 : 0;
 
+  // load all users
   useEffect(() => {
     getUsers()
   }, [getUsers]);
 
+  // detect mobile view
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setCollapsed(true)
-      }
+      setIsMobileView(window.innerWidth < 768);
     }
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close mobile menu when selecting a user
+  // close mobile sidebar on selecting a user
   useEffect(() => {
-    if (selectedUser && window.innerWidth < 768) {
-      setIsMobileMenuOpen(false)
+    if (selectedUser && isMobileView) {
+       setIsMobileMenuOpen(false);
     }
-  }, [selectedUser])
+  }, [selectedUser, isMobileView]);
 
   return (
     <>
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className='md:hidden fixed top-3 right-4 z-50 bg-gray-700 text-white p-2 px-3 rounded-full'
+        className="md:hidden fixed top-3 right-4 z-50 bg-gray-700 text-white p-2 px-3 rounded-full"
       >
-        {isMobileMenuOpen ? <X size={24} /> : '☰'}
+        {isMobileMenuOpen ? <X size={24} /> : "☰"}
       </button>
 
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (
-        <div 
-          className='md:hidden fixed inset-0 bg-black/50 z-40'
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
     
-    <aside className={
-        `fixed md:sticky top-0 h-screen p-4 flex flex-col bg-gray-900 
-         text-white shadow-2xl transition-all duration-300 ease-in-out z-50
-         ${collapsed ? "w-20" : "w-64"} 
-         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-         rounded-r-3xl md:rounded-3xl border-r border-white/10`
-        }>
+      {/* Sidebar main container */}
+      <aside className={
+        `fixed md:sticky top-0 h-screen p-4 flex flex-col bg-gray-900 text-white shadow-2xl
+        transition-transform duration-300 ease-in-out z-50 rounded-r-3xl md:rounded-3xl border-r border-white/10
+        ${
+          isMobileMenuOpen 
+            ? 'translate-x-0' 
+            : '-translate-x-full md:translate-x-0'
+        }
+        ${collapsed && !isMobileView ? "w-20" : "w-[80%] sm:w-[65%] md:w-64"} 
+        `}
+      >
 
-      {/* Logo Section */}
-      <div>
-        <Link to="/" className={`flex justify-center transition-all duration-500
-          rounded-xl bg-gradient-to-r from-purple-500 to-purple-300
-          ${collapsed ? "p-1" : "p-2"}`}>
-          <img 
-            src={AppLogo} 
-            alt="logo" 
-            className={`transition-transform duration-500 ease-in-out
-            ${collapsed ? "h-10 w-10" : "h-16 w-auto"}`}
-          />
-        </Link>          
-      </div>
-      
-     {/* Show online users toggle */}
-      {!collapsed && (
+      {/* Sidebar content wrapper */}
+      <div className="flex flex-col justify-between h-full overflow-hidden">
+        {/* Top Section (Logo + Users List) */}
+        <div>
+          {/* Logo */}
+          <div className="flex justify-center">
+            <Link
+              to="/"
+              className={`flex justify-center transition-all duration-500 rounded-xl bg-gradient-to-r from-purple-500 to-purple-300 ${
+                collapsed && !isMobileView ? "p-1 w-full" : "p-2 w-full"
+              }`}
+            >
+              <img
+                src={AppLogo}
+                alt="logo"
+                className={`transition-transform duration-500 ease-in-out ${
+                  collapsed && !isMobileView ? "h-10 w-10" : "h-16 w-auto"
+                }`}
+              />
+            </Link>
+          </div>
+
+    
+      {/* Show online users toggle */}
+      {(!collapsed || isMobileView) && (
           <div className='mt-3 flex items-center justify-between px-2'>
             <label className='flex items-center gap-2 cursor-pointer'>
               <input 
@@ -102,26 +119,28 @@ const Sidebar = () => {
 
 
       {/* Users List */}
-        {filteredUsers?.length === 0 && (
-          <div className='text-center text-zinc-500 text-sm py-8'>
-            {showOnlineUsers ? 'No online users' : 'No users found'}
-          </div>
-        )}
-
       <div className='flex-1 overflow-y-auto no-scrollbar mt-4'>
         <nav className='flex flex-col gap-2'>
-
-          {filteredUsers?.map((user, i) => {
-            const isActive = selectedUser?._id === user?._id; 
-            return (
+        
+         {filteredUsers?.length === 0 ? (
+            <div className="text-center text-zinc-500 text-sm py-8">
+              {showOnlineUsers ? "No online users" : "No users found"}
+            </div>
+            ) : (
+              filteredUsers?.map((user, i) => {
+              const isActive = selectedUser?._id === user?._id; 
+              return (
               <button 
                 key={user?._id} 
                 onClick={() => setSelectedUser(user)}
-                className={`flex items-center rounded-xl transition-all duration-300
-                ${collapsed ? "justify-center p-2" : "gap-3 p-2"}
-                ${isActive 
-                  ? "bg-gradient-to-r from-purple-600 to-purple-400 text-white font-semibold" 
-                  : "hover:bg-gray-700 text-white"
+                className={`flex items-center rounded-xl transition-all duration-300 ${
+                  collapsed && !isMobileView
+                  ? "justify-center p-2"
+                  : "gap-3 p-2"
+                } ${
+                  isActive 
+                    ? "bg-gradient-to-r from-purple-600 to-purple-400 text-white font-semibold" 
+                    : "hover:bg-gray-700 text-white"
                 }`}
                 style={{ transitionDelay: `${i * 30}ms` }}
               >
@@ -129,51 +148,73 @@ const Sidebar = () => {
                   user={user}
                   authUser={authUser}
                   onlineUsers={onlineUsers}
-                  collapsed={collapsed}
-                  className={collapsed ? 'w-8 h-8' : 'w-10 h-10'}
+                  collapsed={collapsed && !isMobileView}
+                  className={
+                    collapsed && !isMobileView ? "w-8 h-8" : "w-10 h-10"
+                  }
                   online
-                  username
                 />
+                {(!collapsed || isMobileView) && (
+                  <span className="text-sm font-medium truncate">
+                    {user?.username}
+                  </span>
+                )}
               </button>
-            )
-          })}
+            );
+          })
+        )}
         </nav>
       </div>
+    </div>
 
-      {/* Current User Profile Section */}
-        <div className='mt-4 relative border-t border-white/10 pt-4'>
+        {/* Bottom Section (Profile) */}
+        <div className='sticky bottom-0 bg-gray-900 pt-3 border-t border-white/10'>
           <button 
             onClick={() => setToggleProfileBox(!toggleProfileBox)} 
-            className={`flex items-center w-full justify-center
-            ${collapsed ? "p-2" : "gap-3 p-2"}
-            rounded-xl cursor-pointer transition-all duration-300 hover:bg-gray-800`}
+            className={`flex items-center w-full justify-center ${
+               collapsed && !isMobileView ? "p-2" : "gap-3 p-2"
+            } rounded-xl cursor-pointer transition-all duration-300 hover:bg-gray-800`}
           >
             <ProfileImage
               user={authUser}
               authUser={authUser}
               onlineUsers={onlineUsers}
-              collapsed={collapsed}
-              className={collapsed ? 'w-8 h-8' : 'w-10 h-10'}
+              collapsed={collapsed && !isMobileView}
+              className={
+                collapsed && !isMobileView ? "w-8 h-8" : "w-10 h-10"
+              }
             />
-            {!collapsed && (
+            {(!collapsed || isMobileView) && (
               <div className='flex flex-col flex-1 items-center text-center'>
-                <span className='font-semibold text-sm truncate text-center'>{authUser?.username}</span>
+                <span className='font-semibold text-sm truncate text-center'>
+                  {authUser?.username}
+                </span>
                 <span className='text-xs text-gray-400'>View Profile</span>
               </div>
             )}
           </button>
+        </div>  
           
           {/* Profile Menu Dropdown */}
-           <SidebarProfileMenu 
-            toggleProfileBox={toggleProfileBox} 
-            setToggleProfileBox={setToggleProfileBox}
-            logoutAuth={logoutAuth}
-            collapsed={collapsed}
-          />
+          <div
+            className={`
+              absolute bottom-6 left-4 z-50 
+              ${collapsed && !isMobileView ? "translate-x-20" : "translate-x-0"} 
+              transition-transform duration-300
+            `}
+          >
+          <div className="bg-gray-800 shadow-xl rounded-lg">
+            <SidebarProfileMenu 
+              toggleProfileBox={toggleProfileBox} 
+              setToggleProfileBox={setToggleProfileBox}
+              logoutAuth={logoutAuth}
+              collapsed={collapsed && !isMobileView}
+            />
+          </div>  
+          </div>
         </div>
 
-
-      {/* Toggle Sidebar Button - Desktop only */}
+       {/* Collapse Arrow — Desktop Only */}
         <button 
           onClick={() => setCollapsed(!collapsed)} 
           className='hidden md:block absolute top-4 -right-4 bg-gray-700/50 hover:bg-gray-700 
@@ -183,7 +224,7 @@ const Sidebar = () => {
         </button>
       </aside>
     </>
-  )
-}
+  );
+};
 
 export default Sidebar;

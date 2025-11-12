@@ -9,13 +9,23 @@ const Home = () => {
   const {selectedUser} = useChatStore()
 
   const renderContent = () => {
-    if(!selectedUser) return <EmptyChat />
-    if(selectedUser === "profile" ) return <Profile />
-    return <Messages />
-  }
+
+     //  If no user selected, show EmptyChat
+    if (!selectedUser) {
+      return <EmptyChat />;
+    }
+
+    // If user selected "profile", show Profile
+    if (selectedUser === "profile") {
+      return <Profile />;
+    }
+
+    // Otherwise, show chat messages
+    return <Messages />;
+  };
 
   return (
-    <div className="flex min-h-screen bg-gray-900 overflow-hidden">
+    <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
       {/* Sidebar */}
       <Sidebar />
 
